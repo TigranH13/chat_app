@@ -14,17 +14,19 @@ class ChatRoom extends StatelessWidget {
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   void onSendMessage() async {
-    Message msg = Message(
-        sendby: FirebaseAuth.instance.currentUser!.displayName as String,
-        message: messageController.text,
-        time: 'k');
-    await firestore
-        .collection('chatroom')
-        .doc(chatRoomId)
-        .collection('chats')
-        .add(msg.toJson());
+    if (messageController.text.isNotEmpty) {
+      Message msg = Message(
+          sendby: FirebaseAuth.instance.currentUser!.displayName as String,
+          message: messageController.text,
+          time: DateTime.now().toIso8601String());
+      await FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(chatRoomId)
+          .collection('chats')
+          .add(msg.toJson());
 
-    messageController.clear();
+      messageController.clear();
+    }
   }
 
   @override
@@ -45,68 +47,117 @@ class ChatRoom extends StatelessWidget {
                     .collection('chatroom')
                     .doc(chatRoomId)
                     .collection('chats')
+                    .orderBy('time', descending: false)
                     .snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
-                    return ListView.builder(
-                        itemCount: snapshot.data!.docs.length,
-                        itemBuilder: (context, index) {
-                          Map<String, dynamic> msg = snapshot.data!.docs[index]
-                              .data() as Map<String, dynamic>;
-                          return Container(
-                              alignment: msg['sendby'] ==
-                                      FirebaseAuth
-                                          .instance.currentUser!.displayName
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child:
-                                  Text(snapshot.data!.docs[index]['message']));
-                        });
+                    return Expanded(
+                      child: ListView.builder(
+                          itemCount: snapshot.data!.docs.length,
+                          itemBuilder: (context, index) {
+                            Map<String, dynamic> msg =
+                                snapshot.data!.docs[index].data()
+                                    as Map<String, dynamic>;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 14, vertical: 8),
+                              child: Container(
+                                  width: double.infinity,
+                                  decoration: BoxDecoration(
+                                      color: Colors.grey,
+                                      borderRadius: BorderRadius.circular(15)),
+                                  alignment: msg['sendby'] ==
+                                          FirebaseAuth
+                                              .instance.currentUser!.displayName
+                                      ? Alignment.centerRight
+                                      : Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      snapshot.data!.docs[index]['message'],
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  )),
+                            );
+                          }),
+                    );
                   } else {
                     return Container();
                   }
                 },
               ),
-            )
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        height: size.height / 10,
-        width: size.width,
-        alignment: Alignment.center,
-        child: Container(
-          height: size.height / 12,
-          width: size.height / 1.1,
-          child: Row(
-            children: [
-              Container(
-                height: size.height / 12,
-                width: size.width / 1.5,
-                child: TextFormField(
-                  controller: messageController,
-                  autofocus: false,
-                  decoration: const InputDecoration(
-                      filled: true,
-                      fillColor: Color.fromARGB(255, 202, 201, 216),
-                      prefixIcon: Icon(
-                        Icons.search,
-                        color: Color.fromARGB(255, 127, 124, 124),
-                      ),
-                      hintText: 'Search',
-                      border: OutlineInputBorder()),
-                  onSaved: (String? value) {},
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter password';
-                    }
-                    return null;
-                  },
+            ),
+
+            Row(
+              children: [
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: messageController,
+                            autofocus: false,
+                            decoration: const InputDecoration(
+                              filled: true,
+                              fillColor: Color.fromARGB(255, 202, 201, 216),
+                              hintText: 'message',
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: onSendMessage,
+                          icon: Icon(
+                            Icons.send,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              IconButton(onPressed: onSendMessage, icon: Icon(Icons.send))
-            ],
-          ),
+              ],
+            ),
+            // SizedBox(
+            //   height: 50,
+            //   width: double.infinity,
+            //   child: Row(
+            //     children: [
+            //       Container(
+            //         height: size.height / 12,
+            //         width: double.infinity,
+            //         child: TextFormField(
+            //           controller: messageController,
+            //           autofocus: false,
+            //           decoration: const InputDecoration(
+            //               filled: true,
+            //               fillColor: Color.fromARGB(255, 202, 201, 216),
+            //               prefixIcon: Icon(
+            //                 Icons.search,
+            //                 color: Color.fromARGB(255, 127, 124, 124),
+            //               ),
+            //               hintText: 'Search',
+            //               border: OutlineInputBorder()),
+            //           onSaved: (String? value) {},
+            //           validator: (String? value) {
+            //             if (value == null || value.isEmpty) {
+            //               return 'Please enter password';
+            //             }
+            //             return null;
+            //           },
+            //         ),
+            //       ),
+            //       IconButton(onPressed: onSendMessage, icon: Icon(Icons.send))
+            //     ],
+            //   ),
+            // ),
+          ],
         ),
       ),
     );

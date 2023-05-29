@@ -23,24 +23,29 @@ class UserTile extends StatelessWidget {
       }
     }
 
-    return ListTile(
-      onTap: () {
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => ChatRoom(
-              user: userName,
-              chatRoomId: chatRoomId(
-                  FirebaseAuth.instance.currentUser!.email, userEmail),
+    return Padding(
+      padding: const EdgeInsets.all(5.0),
+      child: ListTile(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        tileColor: Colors.grey,
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => ChatRoom(
+                user: userName,
+                chatRoomId: chatRoomId(
+                    FirebaseAuth.instance.currentUser!.email, userEmail),
+              ),
             ),
-          ),
-        );
-      },
-      leading: CircleAvatar(
-        radius: 30,
-        backgroundImage: NetworkImage(userImageUrl),
+          );
+        },
+        leading: CircleAvatar(
+          radius: 30,
+          backgroundImage: NetworkImage(userImageUrl),
+        ),
+        title: Text(userName),
+        subtitle: Text(userEmail),
       ),
-      title: Text(userName),
-      subtitle: Text(userEmail),
     );
   }
 }

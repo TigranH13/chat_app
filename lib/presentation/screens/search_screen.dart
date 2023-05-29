@@ -34,48 +34,53 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Search Product')),
+      appBar: AppBar(title: const Text('Search')),
       body: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Column(
-          children: [
-            const SizedBox(
-              height: 25,
-            ),
-            TextFormField(
-              controller: searchController,
-              onEditingComplete: () async =>
-                  await searchUser(searchController.text),
-              autofocus: false,
-              decoration: const InputDecoration(
-                  filled: true,
-                  fillColor: Color.fromARGB(255, 202, 201, 216),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Color.fromARGB(255, 127, 124, 124),
-                  ),
-                  hintText: 'Search',
-                  border: OutlineInputBorder()),
-              onSaved: (String? value) {},
-              validator: (String? value) {
-                if (value == null || value.isEmpty) {
-                  return 'Please enter password';
-                }
-                return null;
-              },
-            ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: foundUsers.length,
-              itemBuilder: (context, index) {
-                return UserTile(
-                  userImageUrl: foundUsers[index]['avatarUrl'],
-                  userName: foundUsers[index]['name'],
-                  userEmail: foundUsers[index]['email'],
-                );
-              },
-            ),
-          ],
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              const SizedBox(
+                height: 25,
+              ),
+              TextFormField(
+                controller: searchController,
+                onEditingComplete: () async =>
+                    await searchUser(searchController.text),
+                autofocus: false,
+                decoration: const InputDecoration(
+                    filled: true,
+                    fillColor: Color.fromARGB(255, 202, 201, 216),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Color.fromARGB(255, 127, 124, 124),
+                    ),
+                    hintText: 'Search',
+                    border: OutlineInputBorder()),
+                onSaved: (String? value) {},
+                validator: (String? value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter password';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(
+                height: 15,
+              ),
+              ListView.builder(
+                shrinkWrap: true,
+                itemCount: foundUsers.length,
+                itemBuilder: (context, index) {
+                  return UserTile(
+                    userImageUrl: foundUsers[index]['avatarUrl'],
+                    userName: foundUsers[index]['name'],
+                    userEmail: foundUsers[index]['email'],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
