@@ -1,5 +1,6 @@
 import 'package:chat_application/presentation/screens/chats_screen.dart';
 import 'package:chat_application/presentation/screens/friends_screen.dart';
+import 'package:chat_application/presentation/screens/search_screen.dart';
 
 import 'package:chat_application/presentation/screens/settings_screen.dart';
 
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     FrindsScreen(),
     ChatsScreen(),
+    SearchScreen(),
     SettingsScreen(),
   ];
 
@@ -53,6 +55,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 GButton(
                   icon: Icons.messenger_rounded,
                   text: 'Chats',
+                ),
+                GButton(
+                  icon: Icons.search,
+                  text: 'Search',
                 ),
                 GButton(
                   icon: Icons.settings,

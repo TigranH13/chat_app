@@ -1,6 +1,11 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
+import 'package:chat_application/models/user_model.dart';
 import 'package:chat_application/service/auth_service.dart';
+import 'package:chat_application/service/firebase_api.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
 class SettingsScreen extends StatelessWidget {
@@ -29,7 +34,7 @@ class SettingsScreen extends StatelessWidget {
                 height: 15,
               ),
               Text(
-                'Tigran Hayrapetyan',
+                'tigran',
                 style: TextStyle(fontSize: 35, fontWeight: FontWeight.w500),
               ),
               Text(
@@ -81,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                 color: Colors.black,
               ),
               GestureDetector(
-                onTap: () => AuthService().logOut(),
+                onTap: () async => AuthService().logOut(),
                 child: Container(
                   width: double.infinity,
                   height: 60,

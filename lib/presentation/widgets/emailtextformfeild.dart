@@ -1,5 +1,5 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:email_validator/email_validator.dart';
 
 class EmailTextFormField extends StatelessWidget {
   final TextEditingController emailController;
@@ -23,8 +23,8 @@ class EmailTextFormField extends StatelessWidget {
           border: OutlineInputBorder()),
       onSaved: (String? value) {},
       validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter user Name';
+        if (!EmailValidator.validate(value!) || value.isEmpty) {
+          return 'email is not in correct format';
         }
         return null;
       },

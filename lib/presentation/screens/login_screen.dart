@@ -1,13 +1,19 @@
 import 'package:chat_application/presentation/screens/signUpScreen.dart';
 import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
 import 'package:chat_application/presentation/widgets/passwordTextFormField.dart';
-import 'package:chat_application/service/auth_service.dart';
 
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
+import '../widgets/login_bottons.dart';
+
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  @override
+  State<LoginScreen> createState() => _LoginScreenState();
+}
+
+class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     TextEditingController emailController = TextEditingController();
@@ -15,126 +21,59 @@ class LoginScreen extends StatelessWidget {
     final formKey = GlobalKey<FormState>();
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
         child: SingleChildScrollView(
           child: Form(
             key: formKey,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(
-                  height: 100,
-                ),
                 const Center(
                     child: Icon(
                   Icons.message_rounded,
                   color: Colors.grey,
                   size: 150,
                 )),
-                const SizedBox(
-                  height: 15,
-                ),
-                const Text(
-                  'Sign in',
-                  style: TextStyle(
-                      fontSize: 30,
-                      color: Color.fromARGB(255, 48, 48, 50),
-                      fontWeight: FontWeight.w500),
-                ),
-                const SizedBox(
-                  height: 15,
-                ),
-                EmailTextFormField(emailController: emailController),
-                const SizedBox(
-                  height: 10,
-                ),
-                PasswordTextFromField(passwordController: passwordController),
-                const SizedBox(
-                  height: 15,
-                ),
-                Center(
-                  child: Column(
-                    children: [
-                      InkWell(
-                        onTap: () async {
-                          await AuthService().loginWithEmailandPassword(
-                              emailController.text, passwordController.text);
-                        },
-                        child: Container(
-                          height: 50,
-                          width: 350,
-                          decoration: BoxDecoration(
-                              color: Colors.blue,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: const Center(
-                            child: Text(
-                              'Login',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20),
-                            ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      GestureDetector(
-                        child: Container(
-                          height: 50,
-                          width: 350,
-                          decoration: BoxDecoration(
-                              color: Colors.grey,
-                              borderRadius: BorderRadius.circular(15)),
-                          child: const Center(
-                              child: Row(
-                            children: [
-                              Padding(
-                                padding: EdgeInsets.only(left: 23, right: 23),
-                                child: Icon(
-                                  Icons.g_mobiledata_rounded,
-                                  color: Colors.blue,
-                                  size: 35,
-                                ),
-                              ),
-                              Text(
-                                'Login with Google',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 20),
-                              ),
-                            ],
-                          )),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      Row(children: [
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        const Text('New to Logistics? ',
-                            style: TextStyle(fontSize: 20)),
-                        TextButton(
-                          onPressed: (() {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) => const SignUpScreen(),
-                              ),
-                            );
-                          }),
-                          child: const Text(
-                            'Register',
-                            style: TextStyle(color: Colors.blue, fontSize: 20),
-                          ),
-                        ),
-                      ]),
-                    ],
+                const Padding(
+                  padding: EdgeInsets.only(top: 15, bottom: 15),
+                  child: Text(
+                    'Sign in',
+                    style: TextStyle(
+                        fontSize: 30,
+                        color: Color.fromARGB(255, 48, 48, 50),
+                        fontWeight: FontWeight.w500),
                   ),
                 ),
+                EmailTextFormField(emailController: emailController),
+                Padding(
+                  padding: const EdgeInsets.only(top: 10, bottom: 15),
+                  child: PasswordTextFromField(
+                      passwordController: passwordController),
+                ),
+                LoginButtons(
+                    formKey: formKey,
+                    emailController: emailController,
+                    passwordController: passwordController),
+                Row(children: [
+                  const SizedBox(
+                    width: 70,
+                  ),
+                  const Text('Have not signed yet',
+                      style: TextStyle(fontSize: 20)),
+                  TextButton(
+                    onPressed: (() {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => const SignUpScreen(),
+                        ),
+                      );
+                    }),
+                    child: const Text(
+                      'Register',
+                      style: TextStyle(color: Colors.blue, fontSize: 20),
+                    ),
+                  ),
+                ]),
               ],
             ),
           ),

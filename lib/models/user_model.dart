@@ -5,13 +5,11 @@ part 'user_model.g.dart';
 
 @JsonSerializable()
 class NewUser {
-  final String id;
   final String name;
   final String email;
   final String avatarUrl;
 
   NewUser({
-    required this.id,
     required this.name,
     required this.email,
     required this.avatarUrl,
