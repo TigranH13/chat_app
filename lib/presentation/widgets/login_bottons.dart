@@ -23,8 +23,6 @@ class LoginButtons extends StatelessWidget {
           InkWell(
             onTap: () async {
               if (!formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(
                     content: Text('Somthing went wrong'),
@@ -92,7 +90,7 @@ class LoginButtons extends StatelessWidget {
             ),
           ),
           const SizedBox(
-            height: 50,
+            height: 100,
           ),
         ],
       ),

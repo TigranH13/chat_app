@@ -9,6 +9,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class FirebaseApi {
+  final usersCollection = FirebaseFirestore.instance.collection('users');
   Future addUser({
     required File? image,
     required String name,
@@ -25,7 +26,12 @@ class FirebaseApi {
         await imageRef.putFile(image!).whenComplete(() => print('lav'));
     final imageUrl = await snapshot.ref.getDownloadURL();
 
-    final newUser = NewUser(name: name, email: email, avatarUrl: imageUrl);
+    final newUser = NewUser(
+        name: name,
+        email: email,
+        avatarUrl: imageUrl,
+        friends: [],
+        requests: []);
 
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
@@ -34,7 +40,7 @@ class FirebaseApi {
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(userCredential.user!.uid)
+        .doc(userCredential.user!.email)
         .set(newUser.toJson());
   }
 }

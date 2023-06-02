@@ -8,8 +8,12 @@ class NewUser {
   final String name;
   final String email;
   final String avatarUrl;
+  final List requests;
+  final List friends;
 
   NewUser({
+    required this.friends,
+    required this.requests,
     required this.name,
     required this.email,
     required this.avatarUrl,

@@ -1,4 +1,4 @@
-import 'package:chat_application/presentation/screens/chats_screen.dart';
+import 'package:chat_application/presentation/screens/firend_requests_sreen.dart';
 import 'package:chat_application/presentation/screens/friends_screen.dart';
 import 'package:chat_application/presentation/screens/search_screen.dart';
 
@@ -6,8 +6,6 @@ import 'package:chat_application/presentation/screens/settings_screen.dart';
 
 import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
-
-import '../../service/auth_service.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,16 +16,19 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
-    FrindsScreen(),
-    ChatsScreen(),
-    SearchScreen(),
-    SettingsScreen(),
+    const FrindsScreen(),
+    const SearchScreen(),
+    const SettingsScreen(),
   ];
 
   int currentIndex = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        elevation: 0,
+        backgroundColor: const Color.fromARGB(255, 188, 183, 183),
+      ),
       body: _children[currentIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
@@ -53,10 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
                   text: 'Friends',
                 ),
                 GButton(
-                  icon: Icons.messenger_rounded,
-                  text: 'Chats',
-                ),
-                GButton(
                   icon: Icons.search,
                   text: 'Search',
                 ),
@@ -67,22 +64,6 @@ class _HomeScreenState extends State<HomeScreen> {
               ]),
         ),
       ),
-    );
-  }
-
-  AppBar buildAppBar() {
-    return AppBar(
-      backgroundColor: Colors.grey,
-      automaticallyImplyLeading: false,
-      title: const Text("Chats"),
-      actions: [
-        IconButton(
-          icon: const Icon(Icons.exit_to_app_rounded),
-          onPressed: () async {
-            AuthService().logOut();
-          },
-        ),
-      ],
     );
   }
 }

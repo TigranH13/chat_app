@@ -1,12 +1,11 @@
 import 'dart:io';
 
-import 'package:chat_application/models/user_model.dart';
 import 'package:chat_application/presentation/screens/login_screen.dart';
 import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
 import 'package:chat_application/presentation/widgets/passwordTextFormField.dart';
-import 'package:chat_application/service/auth_service.dart';
+
 import 'package:chat_application/service/firebase_api.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -80,17 +79,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(
-                        height: 25,
+                        height: 50,
                       ),
+                      EmailTextFormField(emailController: emailController),
                       Padding(
-                        padding: const EdgeInsets.only(top: 25, bottom: 10),
-                        child: EmailTextFormField(
-                            emailController: emailController),
-                      ),
-                      PasswordTextFromField(
-                          passwordController: passwordController),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 35),
+                        padding: const EdgeInsets.only(top: 10, bottom: 10),
                         child: TextFormField(
                           controller: nameController,
                           decoration: const InputDecoration(
@@ -111,73 +104,21 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                         ),
                       ),
-                      Center(
-                        child: GestureDetector(
-                          onTap: (() async {
-                            if (formKey.currentState!.validate() == false ||
-                                img == null) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text('Somthing went wrong')),
-                              );
-                            } else {
-                              showDialog(
-                                  barrierDismissible: true,
-                                  context: context,
-                                  builder: ((context) => const Center(
-                                        child: CircularProgressIndicator(),
-                                      )));
-                              final name = nameController.text;
-                              final email = emailController.text;
-                              final password = passwordController.text;
-                              await FirebaseApi().addUser(
-                                  image: img,
-                                  name: name,
-                                  email: email,
-                                  password: password);
-                            }
-
-                            myNavigatorKey.currentState!
-                                .popUntil((route) => route.isFirst);
-                          }),
-                          child: Container(
-                            height: 50,
-                            width: 350,
-                            decoration: BoxDecoration(
-                                color: Colors.blue,
-                                borderRadius: BorderRadius.circular(15)),
-                            child: const Center(
-                                child: Text(
-                              'Sign up',
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 20),
-                            )),
-                          ),
-                        ),
-                      ),
+                      PasswordTextFromField(
+                          passwordController: passwordController),
                       const SizedBox(
                         height: 50,
                       ),
-                      Row(children: [
-                        const SizedBox(
-                          width: 70,
-                        ),
-                        const Text('Joined us before? ',
-                            style: TextStyle(fontSize: 20)),
-                        TextButton(
-                          onPressed: (() {
-                            Navigator.of(context).push(MaterialPageRoute(
-                              builder: (context) => const LoginScreen(),
-                            ));
-                          }),
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(color: Colors.blue, fontSize: 20),
-                          ),
-                        ),
-                      ])
+                      SignUpButton(
+                          formKey: formKey,
+                          img: img,
+                          nameController: nameController,
+                          emailController: emailController,
+                          passwordController: passwordController),
+                      const SizedBox(
+                        height: 50,
+                      ),
+                      const LowerText()
                     ],
                   ),
                 ),
@@ -185,6 +126,91 @@ class _SignUpScreenState extends State<SignUpScreen> {
             );
           }
         },
+      ),
+    );
+  }
+}
+
+class LowerText extends StatelessWidget {
+  const LowerText({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      const SizedBox(
+        width: 70,
+      ),
+      const Text('Joined us before? ', style: TextStyle(fontSize: 20)),
+      TextButton(
+        onPressed: (() {
+          Navigator.of(context).push(MaterialPageRoute(
+            builder: (context) => const LoginScreen(),
+          ));
+        }),
+        child: const Text(
+          'Login',
+          style: TextStyle(color: Colors.blue, fontSize: 20),
+        ),
+      ),
+    ]);
+  }
+}
+
+class SignUpButton extends StatelessWidget {
+  const SignUpButton({
+    super.key,
+    required this.formKey,
+    required this.img,
+    required this.nameController,
+    required this.emailController,
+    required this.passwordController,
+  });
+
+  final GlobalKey<FormState> formKey;
+  final File? img;
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController passwordController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: (() async {
+          if (formKey.currentState!.validate() == false || img == null) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Somthing went wrong')),
+            );
+          } else {
+            showDialog(
+                barrierDismissible: true,
+                context: context,
+                builder: ((context) => const Center(
+                      child: CircularProgressIndicator(),
+                    )));
+            final name = nameController.text;
+            final email = emailController.text;
+            final password = passwordController.text;
+            await FirebaseApi().addUser(
+                image: img, name: name, email: email, password: password);
+          }
+
+          myNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+        }),
+        child: Container(
+          height: 50,
+          width: 350,
+          decoration: BoxDecoration(
+              color: Colors.blue, borderRadius: BorderRadius.circular(15)),
+          child: const Center(
+              child: Text(
+            'Sign up',
+            style: TextStyle(
+                color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20),
+          )),
+        ),
       ),
     );
   }

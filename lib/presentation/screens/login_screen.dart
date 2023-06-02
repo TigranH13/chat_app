@@ -54,31 +54,41 @@ class _LoginScreenState extends State<LoginScreen> {
                     formKey: formKey,
                     emailController: emailController,
                     passwordController: passwordController),
-                Row(children: [
-                  const SizedBox(
-                    width: 70,
-                  ),
-                  const Text('Have not signed yet',
-                      style: TextStyle(fontSize: 20)),
-                  TextButton(
-                    onPressed: (() {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SignUpScreen(),
-                        ),
-                      );
-                    }),
-                    child: const Text(
-                      'Register',
-                      style: TextStyle(color: Colors.blue, fontSize: 20),
-                    ),
-                  ),
-                ]),
+                const LowerText(),
               ],
             ),
           ),
         ),
       ),
     );
+  }
+}
+
+class LowerText extends StatelessWidget {
+  const LowerText({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      const SizedBox(
+        width: 70,
+      ),
+      const Text('Have not signed yet', style: TextStyle(fontSize: 20)),
+      TextButton(
+        onPressed: (() {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const SignUpScreen(),
+            ),
+          );
+        }),
+        child: const Text(
+          'Register',
+          style: TextStyle(color: Colors.blue, fontSize: 20),
+        ),
+      ),
+    ]);
   }
 }

@@ -1,5 +1,3 @@
-// ignore_for_file: sized_box_for_whitespace, prefer_const_constructors
-
 import 'package:chat_application/models/message_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,7 +8,9 @@ class ChatRoom extends StatelessWidget {
   final String user;
   final String chatRoomId;
   ChatRoom({super.key, required this.user, required this.chatRoomId});
+
   final TextEditingController messageController = TextEditingController();
+
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   void onSendMessage() async {
@@ -39,9 +39,8 @@ class ChatRoom extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Container(
+            SizedBox(
               height: size.height / 1.25,
-              width: size.width,
               child: StreamBuilder(
                 stream: firestore
                     .collection('chatroom')
@@ -51,47 +50,53 @@ class ChatRoom extends StatelessWidget {
                     .snapshots(),
                 builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
                   if (snapshot.hasData) {
-                    return Expanded(
-                      child: ListView.builder(
-                          itemCount: snapshot.data!.docs.length,
-                          itemBuilder: (context, index) {
-                            Map<String, dynamic> msg =
-                                snapshot.data!.docs[index].data()
-                                    as Map<String, dynamic>;
-                            return Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 14, vertical: 8),
-                              child: Container(
-                                  width: double.infinity,
+                    return ListView.builder(
+                        physics: const BouncingScrollPhysics(),
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> msg = snapshot.data!.docs[index]
+                              .data() as Map<String, dynamic>;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 14, vertical: 8),
+                            child: Row(
+                              mainAxisAlignment: msg['sendby'] ==
+                                      FirebaseAuth
+                                          .instance.currentUser!.displayName
+                                  ? MainAxisAlignment.end
+                                  : MainAxisAlignment.start,
+                              children: [
+                                Container(
                                   decoration: BoxDecoration(
-                                      color: Colors.grey,
-                                      borderRadius: BorderRadius.circular(15)),
-                                  alignment: msg['sendby'] ==
-                                          FirebaseAuth
-                                              .instance.currentUser!.displayName
-                                      ? Alignment.centerRight
-                                      : Alignment.centerLeft,
+                                      color: msg['sendby'] ==
+                                              FirebaseAuth.instance.currentUser!
+                                                  .displayName
+                                          ? Colors.grey
+                                          : Colors.blue,
+                                      borderRadius: BorderRadius.circular(10)),
                                   child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                    padding: const EdgeInsets.only(
+                                        top: 8, bottom: 8, left: 30, right: 30),
                                     child: Text(
                                       snapshot.data!.docs[index]['message'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         color: Colors.white,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                  )),
-                            );
-                          }),
-                    );
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        });
                   } else {
                     return Container();
                   }
                 },
               ),
             ),
-
             Row(
               children: [
                 Expanded(
@@ -112,7 +117,7 @@ class ChatRoom extends StatelessWidget {
                         ),
                         IconButton(
                           onPressed: onSendMessage,
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.send,
                             color: Colors.grey,
                             size: 30,
@@ -124,39 +129,6 @@ class ChatRoom extends StatelessWidget {
                 ),
               ],
             ),
-            // SizedBox(
-            //   height: 50,
-            //   width: double.infinity,
-            //   child: Row(
-            //     children: [
-            //       Container(
-            //         height: size.height / 12,
-            //         width: double.infinity,
-            //         child: TextFormField(
-            //           controller: messageController,
-            //           autofocus: false,
-            //           decoration: const InputDecoration(
-            //               filled: true,
-            //               fillColor: Color.fromARGB(255, 202, 201, 216),
-            //               prefixIcon: Icon(
-            //                 Icons.search,
-            //                 color: Color.fromARGB(255, 127, 124, 124),
-            //               ),
-            //               hintText: 'Search',
-            //               border: OutlineInputBorder()),
-            //           onSaved: (String? value) {},
-            //           validator: (String? value) {
-            //             if (value == null || value.isEmpty) {
-            //               return 'Please enter password';
-            //             }
-            //             return null;
-            //           },
-            //         ),
-            //       ),
-            //       IconButton(onPressed: onSendMessage, icon: Icon(Icons.send))
-            //     ],
-            //   ),
-            // ),
           ],
         ),
       ),
