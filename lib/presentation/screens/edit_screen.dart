@@ -2,13 +2,10 @@ import 'dart:io';
 
 import 'package:chat_application/models/user_model.dart';
 import 'package:chat_application/presentation/screens/home_screen.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
+import 'package:chat_application/service/firebase_api.dart';
+
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-
-import '../../main.dart';
 
 class EditScreen extends StatefulWidget {
   final NewUser? user;
@@ -19,26 +16,6 @@ class EditScreen extends StatefulWidget {
 }
 
 class _EditScreenState extends State<EditScreen> {
-  void editProfileImage() async {
-    await pickImage();
-    String uniqueName = DateTime.now().millisecondsSinceEpoch.toString();
-
-    Reference storageReference = FirebaseStorage.instance.ref();
-    Reference bucketRef = storageReference.child('images');
-    Reference imageRef = bucketRef.child(uniqueName);
-    DocumentReference userRef = FirebaseFirestore.instance
-        .collection('users')
-        .doc(FirebaseAuth.instance.currentUser!.email);
-
-    final snapshot = await imageRef.putFile(img!).whenComplete(() => null);
-
-    final imageUrl = await snapshot.ref.getDownloadURL();
-
-    userRef.update({
-      'avatarUrl': imageUrl,
-    });
-  }
-
   File? img;
 
   Future pickImage() async {
@@ -82,7 +59,8 @@ class _EditScreenState extends State<EditScreen> {
                     children: [
                       InkWell(
                         onTap: () async {
-                          editProfileImage();
+                          await pickImage();
+                          FirebaseApi().editProfileImage(img);
                         },
                         child: CircleAvatar(
                           radius: 50,
@@ -108,12 +86,7 @@ class _EditScreenState extends State<EditScreen> {
                       labelStyle: const TextStyle(color: Colors.black),
                       suffixIcon: IconButton(
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(FirebaseAuth.instance.currentUser!.email)
-                              .update({
-                            'name': nameController.text.trim(),
-                          });
+                          FirebaseApi().editProfileName(nameController);
                         },
                         icon: const Icon(
                           Icons.check,

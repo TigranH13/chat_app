@@ -1,4 +1,5 @@
 import 'package:chat_application/models/message_model.dart';
+import 'package:chat_application/service/firebase_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -12,22 +13,6 @@ class ChatRoom extends StatelessWidget {
   final TextEditingController messageController = TextEditingController();
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  void onSendMessage() async {
-    if (messageController.text.isNotEmpty) {
-      Message msg = Message(
-          sendby: FirebaseAuth.instance.currentUser!.displayName as String,
-          message: messageController.text,
-          time: DateTime.now().toIso8601String());
-      await FirebaseFirestore.instance
-          .collection('chatroom')
-          .doc(chatRoomId)
-          .collection('chats')
-          .add(msg.toJson());
-
-      messageController.clear();
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -116,7 +101,8 @@ class ChatRoom extends StatelessWidget {
                           ),
                         ),
                         IconButton(
-                          onPressed: onSendMessage,
+                          onPressed: () => FirebaseApi()
+                              .onSendMessage(messageController, chatRoomId),
                           icon: const Icon(
                             Icons.send,
                             color: Colors.grey,

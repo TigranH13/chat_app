@@ -1,5 +1,6 @@
 import 'package:chat_application/models/user_model.dart';
 import 'package:chat_application/presentation/screens/chat_room.dart';
+import 'package:chat_application/service/firebase_api.dart';
 import 'package:chat_application/utils/utils.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -75,32 +76,13 @@ class _UserTileState extends State<UserTile> {
                 trailing: toogleFirends()
                     ? IconButton(
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.email)
-                              .update({
-                            'friends': FieldValue.arrayRemove(
-                                [FirebaseAuth.instance.currentUser!.email]),
-                          });
-
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(FirebaseAuth.instance.currentUser!.email)
-                              .update({
-                            'friends': FieldValue.arrayRemove([user!.email]),
-                          });
+                          FirebaseApi().removeFriend(user!);
                         },
                         icon: const Icon(Icons.person_off_rounded),
                       )
                     : IconButton(
                         onPressed: () {
-                          FirebaseFirestore.instance
-                              .collection('users')
-                              .doc(user!.email)
-                              .update({
-                            'requests': FieldValue.arrayUnion(
-                                [FirebaseAuth.instance.currentUser!.email]),
-                          });
+                          FirebaseApi().addRequest(user!);
                         },
                         icon: const Icon(Icons.person_add_alt_outlined),
                       ),
