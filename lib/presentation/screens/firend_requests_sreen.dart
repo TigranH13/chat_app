@@ -41,15 +41,20 @@ class _FrienRequestsScreenState extends State<FrienRequestsScreen> {
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: requests.isEmpty
-              ? Container()
-              : ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: requests.length,
-                  itemBuilder: (context, index) {
-                    return RequestUserTile(id: requests[index]);
-                  },
-                ),
+          child: StreamBuilder(
+              stream: usersCollection.doc(id).snapshots(),
+              builder: (context, snapshot) {
+                return snapshot.hasData
+                    ? ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!['requests'].length,
+                        itemBuilder: (context, index) {
+                          return RequestUserTile(
+                              id: snapshot.data!['requests'][index]);
+                        },
+                      )
+                    : Container();
+              }),
         ),
       ),
     );

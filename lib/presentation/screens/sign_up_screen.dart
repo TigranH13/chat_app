@@ -199,7 +199,7 @@ class SignUpButton extends StatelessWidget {
             );
           } else {
             showDialog(
-                barrierDismissible: true,
+                barrierDismissible: false,
                 context: context,
                 builder: ((context) => const Center(
                       child: CircularProgressIndicator(),
@@ -209,9 +209,9 @@ class SignUpButton extends StatelessWidget {
             final password = passwordController.text;
             await FirebaseApi().addUser(
                 image: img, name: name, email: email, password: password);
-          }
 
-          myNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+            myNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+          }
         }),
         child: Container(
           height: 50,

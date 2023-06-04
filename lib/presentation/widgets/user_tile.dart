@@ -8,86 +8,73 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 
-class UserTile extends StatefulWidget {
+class UserTile extends StatelessWidget {
   final String id;
 
-  const UserTile({
+  UserTile({
     super.key,
     required this.id,
   });
 
-  @override
-  State<UserTile> createState() => _UserTileState();
-}
-
-class _UserTileState extends State<UserTile> {
   final currentUser = FirebaseAuth.instance.currentUser;
+
   final usersCollection = FirebaseFirestore.instance.collection('users');
-  NewUser? user;
-  Future getUsers() async {
-    final myUser = await usersCollection.doc(widget.id).get();
-
-    setState(() {
-      user = NewUser.fromJson(myUser.data()!);
-    });
-  }
-
-  bool toogleFirends() {
-    return user!.friends.contains(currentUser!.email);
-  }
-
-  @override
-  void initState() {
-    getUsers();
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.all(5.0),
-      child: user == null
-          ? const Center(child: CircularProgressIndicator())
-          : FutureBuilder(
-              future: getUsers(),
-              builder: (context, snapshot) => ListTile(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                tileColor: Colors.grey,
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (context) => ChatRoom(
-                        user: user!.name,
-                        chatRoomId: Utils().chatRoomId(
-                            FirebaseAuth.instance.currentUser!.email!.hashCode,
-                            user!.email.hashCode),
-                      ),
+      child: FutureBuilder(
+        future: usersCollection.doc(id).get(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.done) {
+            final user =
+                NewUser.fromJson(snapshot.data!.data() as Map<String, dynamic>);
+            return snapshot.hasData
+                ? ListTile(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10)),
+                    tileColor: Colors.grey,
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => ChatRoom(
+                            user: user.name,
+                            chatRoomId: Utils().chatRoomId(
+                                FirebaseAuth
+                                    .instance.currentUser!.email!.hashCode,
+                                user.email.hashCode),
+                          ),
+                        ),
+                      );
+                    },
+                    leading: CircleAvatar(
+                      radius: 30,
+                      backgroundImage: NetworkImage(user.avatarUrl),
                     ),
-                  );
-                },
-                leading: CircleAvatar(
-                  radius: 30,
-                  backgroundImage: NetworkImage(user!.avatarUrl),
-                ),
-                title: Text(user!.name),
-                subtitle: Text(user!.email),
-                trailing: toogleFirends()
-                    ? IconButton(
-                        onPressed: () {
-                          FirebaseApi().removeFriend(user!);
-                        },
-                        icon: const Icon(Icons.person_off_rounded),
-                      )
-                    : IconButton(
-                        onPressed: () {
-                          FirebaseApi().addRequest(user!);
-                        },
-                        icon: const Icon(Icons.person_add_alt_outlined),
-                      ),
-              ),
-            ),
+                    title: Text(user.name),
+                    subtitle: Text(user.email),
+                    trailing: user.friends.contains(currentUser!.email)
+                        ? IconButton(
+                            onPressed: () {
+                              FirebaseApi().removeFriend(user);
+                              print('cm');
+                            },
+                            icon: const Icon(Icons.person_off_rounded),
+                          )
+                        : IconButton(
+                            onPressed: () {
+                              FirebaseApi().addRequest(user);
+                            },
+                            icon: const Icon(Icons.person_add_alt_outlined),
+                          ),
+                  )
+                : const SizedBox();
+          } else {
+            return const Center(child: CircularProgressIndicator());
+          }
+        },
+      ),
     );
   }
 }

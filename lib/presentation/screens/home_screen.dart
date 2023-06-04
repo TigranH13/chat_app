@@ -15,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
-    const FrindsScreen(),
+    FrindsScreen(),
     const SearchScreen(),
     const SettingsScreen(),
   ];

@@ -30,7 +30,7 @@ class LoginButtons extends StatelessWidget {
                 );
               } else {
                 showDialog(
-                    barrierDismissible: true,
+                    barrierDismissible: false,
                     context: context,
                     builder: ((context) => const Center(
                           child: CircularProgressIndicator(),
