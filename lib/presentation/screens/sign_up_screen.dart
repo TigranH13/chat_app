@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:chat_application/presentation/screens/login_screen.dart';
 import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
-import 'package:chat_application/presentation/widgets/passwordTextFormField.dart';
+import 'package:chat_application/presentation/widgets/password_text_form_field.dart';
 
 import 'package:chat_application/service/firebase_api.dart';
 
@@ -84,25 +84,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       EmailTextFormField(emailController: emailController),
                       Padding(
                         padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: TextFormField(
-                          controller: nameController,
-                          decoration: const InputDecoration(
-                              filled: true,
-                              fillColor: Color.fromARGB(255, 202, 201, 216),
-                              prefixIcon: Icon(
-                                Icons.person_2,
-                                color: Color.fromARGB(255, 127, 124, 124),
-                              ),
-                              hintText: 'name',
-                              border: OutlineInputBorder()),
-                          onSaved: (String? value) {},
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter user Name';
-                            }
-                            return null;
-                          },
-                        ),
+                        child: NameFormField(nameController: nameController),
                       ),
                       PasswordTextFromField(
                           passwordController: passwordController),
@@ -127,6 +109,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
           }
         },
       ),
+    );
+  }
+}
+
+class NameFormField extends StatelessWidget {
+  const NameFormField({
+    super.key,
+    required this.nameController,
+  });
+
+  final TextEditingController nameController;
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      controller: nameController,
+      decoration: const InputDecoration(
+          filled: true,
+          fillColor: Color.fromARGB(255, 202, 201, 216),
+          prefixIcon: Icon(
+            Icons.person_2,
+            color: Color.fromARGB(255, 127, 124, 124),
+          ),
+          hintText: 'name',
+          border: OutlineInputBorder()),
+      onSaved: (String? value) {},
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter user Name';
+        }
+        return null;
+      },
     );
   }
 }

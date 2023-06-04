@@ -76,7 +76,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     onTap: () {
                       Navigator.of(context).push(
                         MaterialPageRoute(
-                          builder: (context) => const EditScreen(),
+                          builder: (context) => EditScreen(
+                            user: user!,
+                          ),
                         ),
                       );
                     },

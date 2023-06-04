@@ -1,4 +1,3 @@
-import 'package:chat_application/presentation/screens/firend_requests_sreen.dart';
 import 'package:chat_application/presentation/screens/friends_screen.dart';
 import 'package:chat_application/presentation/screens/search_screen.dart';
 
@@ -25,10 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: const Color.fromARGB(255, 188, 183, 183),
-      ),
       body: _children[currentIndex],
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(

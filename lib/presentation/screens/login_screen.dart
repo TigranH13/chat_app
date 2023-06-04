@@ -1,6 +1,6 @@
-import 'package:chat_application/presentation/screens/signUpScreen.dart';
+import 'package:chat_application/presentation/screens/sign_up_screen.dart';
 import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
-import 'package:chat_application/presentation/widgets/passwordTextFormField.dart';
+import 'package:chat_application/presentation/widgets/password_text_form_field.dart';
 
 import 'package:flutter/material.dart';
 
