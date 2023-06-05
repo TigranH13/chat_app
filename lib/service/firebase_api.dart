@@ -13,6 +13,7 @@ import '../models/message_model.dart';
 
 class FirebaseApi {
   final usersCollection = FirebaseFirestore.instance.collection('users');
+
   Future addUser({
     required File? image,
     required String name,
@@ -93,7 +94,7 @@ class FirebaseApi {
   }
 
   void removeFriend(NewUser user) {
-    FirebaseFirestore.instance.collection('users').doc(user.email).update({
+    usersCollection.doc(user.email).update({
       'friends':
           FieldValue.arrayRemove([FirebaseAuth.instance.currentUser!.email]),
     });
@@ -107,9 +108,38 @@ class FirebaseApi {
   }
 
   void addRequest(NewUser user) {
-    FirebaseFirestore.instance.collection('users').doc(user.email).update({
+    usersCollection.doc(user.email).update({
       'requests':
           FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.email]),
+    });
+  }
+
+  void dissAgreeRequest(NewUser user) {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .update({
+      'requests': FieldValue.arrayRemove([user.email]),
+    });
+  }
+
+  void agreeRequest(NewUser user) {
+    usersCollection.doc(user.email).update({
+      'friends':
+          FieldValue.arrayUnion([FirebaseAuth.instance.currentUser!.email]),
+    });
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .update({
+      'friends': FieldValue.arrayUnion([user.email]),
+    });
+
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(FirebaseAuth.instance.currentUser!.email)
+        .update({
+      'requests': FieldValue.arrayRemove([user.email]),
     });
   }
 }
