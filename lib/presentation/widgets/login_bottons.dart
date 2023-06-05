@@ -62,6 +62,17 @@ class LoginButtons extends StatelessWidget {
             height: 10,
           ),
           GestureDetector(
+            onTap: () async {
+              showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: ((context) => const Center(
+                        child: CircularProgressIndicator(),
+                      )));
+              await AuthService().registerUserWithGoogle();
+
+              myNavigatorKey.currentState!.popUntil((route) => route.isFirst);
+            },
             child: Container(
               height: 50,
               width: 350,

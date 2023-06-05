@@ -40,6 +40,7 @@ class FirebaseApi {
     UserCredential userCredential = await FirebaseAuth.instance
         .createUserWithEmailAndPassword(email: email, password: password);
     User? user = userCredential.user;
+
     user!.updateDisplayName(name);
 
     await FirebaseFirestore.instance
