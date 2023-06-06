@@ -16,7 +16,6 @@ class AuthService {
   }
 
   Future registerUserWithGoogle() async {
-    print("googleLogin method Called");
     GoogleSignIn googleSignIn = GoogleSignIn();
     try {
       var user = await googleSignIn.signIn();
