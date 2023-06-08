@@ -248,6 +248,12 @@
       "languageVersion": "3.0"
     },
     {
+      "name": "flutter_custom_clippers",
+      "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_custom_clippers-2.1.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "flutter_lints",
       "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/flutter_lints-2.0.1",
       "packageUri": "lib/",
@@ -608,7 +614,7 @@
       "languageVersion": "2.18"
     }
   ],
-  "generated": "2023-05-29T13:26:17.931533Z",
+  "generated": "2023-06-07T21:17:25.446209Z",
   "generator": "pub",
   "generatorVersion": "3.0.1"
 }

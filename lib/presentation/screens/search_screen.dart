@@ -75,7 +75,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     onSaved: (String? value) {},
                     validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Please enter password';
+                        return 'Please enter some text';
                       }
                       return null;
                     },
