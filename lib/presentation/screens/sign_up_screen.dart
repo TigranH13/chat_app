@@ -1,20 +1,19 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'dart:io';
 
-import 'package:chat_application/presentation/screens/login_screen.dart';
-import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
-import 'package:chat_application/presentation/widgets/password_text_form_field.dart';
+import 'package:chat_application/presentation/widgets/my_text_field.dart';
 
 import 'package:chat_application/service/firebase_api.dart';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../main.dart';
-import 'home_screen.dart';
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  final void Function()? onTap;
+  const SignUpScreen({super.key, required this.onTap});
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
@@ -42,20 +41,20 @@ class _SignUpScreenState extends State<SignUpScreen> {
     final formKey = GlobalKey<FormState>();
 
     return Scaffold(
-      body: StreamBuilder(
-        stream: FirebaseAuth.instance.authStateChanges(),
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            return const HomeScreen();
-          } else {
-            return Padding(
-              padding: const EdgeInsets.only(top: 50, left: 15, right: 15),
-              child: SingleChildScrollView(
-                child: Form(
-                  key: formKey,
+        backgroundColor: Colors.grey[300],
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Form(
+              key: formKey,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 25),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      const SizedBox(
+                        height: 50,
+                      ),
                       Center(
                         child: InkWell(
                           onTap: () async {
@@ -63,7 +62,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                           child: CircleAvatar(
                             radius: 80,
-                            backgroundColor: Colors.blueGrey,
+                            backgroundColor: Colors.grey[800],
                             child: img == null
                                 ? const Icon(Icons.add_a_photo_outlined,
                                     size: 40, color: Colors.grey)
@@ -81,15 +80,36 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 50,
                       ),
-                      EmailTextFormField(emailController: emailController),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 10, bottom: 10),
-                        child: NameFormField(nameController: nameController),
+                      const Text(
+                        'Lets create an account for you',
+                        style: TextStyle(fontSize: 16),
                       ),
-                      PasswordTextFromField(
-                          passwordController: passwordController),
                       const SizedBox(
-                        height: 50,
+                        height: 25,
+                      ),
+                      MyTextField(
+                          controller: emailController,
+                          isemail: true,
+                          hintText: "Email",
+                          onbsureText: false),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                          controller: nameController,
+                          isemail: false,
+                          hintText: "UserName",
+                          onbsureText: false),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      MyTextField(
+                          controller: passwordController,
+                          isemail: false,
+                          hintText: "password",
+                          onbsureText: true),
+                      const SizedBox(
+                        height: 25,
                       ),
                       SignUpButton(
                           formKey: formKey,
@@ -100,77 +120,58 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 50,
                       ),
-                      const LowerText()
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Already  a member?'),
+                          SizedBox(
+                            width: 4,
+                          ),
+                          TextButton(
+                            onPressed: widget.onTap,
+                            child: Text(
+                              'Login Now',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        ],
+                      )
                     ],
                   ),
                 ),
               ),
-            );
-          }
-        },
-      ),
-    );
-  }
-}
-
-class NameFormField extends StatelessWidget {
-  const NameFormField({
-    super.key,
-    required this.nameController,
-  });
-
-  final TextEditingController nameController;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: nameController,
-      decoration: const InputDecoration(
-          filled: true,
-          fillColor: Color.fromARGB(255, 202, 201, 216),
-          prefixIcon: Icon(
-            Icons.person_2,
-            color: Color.fromARGB(255, 127, 124, 124),
+            ),
           ),
-          hintText: 'name',
-          border: OutlineInputBorder()),
-      onSaved: (String? value) {},
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter user Name';
-        }
-        return null;
-      },
-    );
+        ));
   }
 }
 
-class LowerText extends StatelessWidget {
-  const LowerText({
-    super.key,
-  });
+// class LowerText extends StatelessWidget {
+//   const LowerText({
+//     super.key,
+//   });
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(children: [
-      const SizedBox(
-        width: 70,
-      ),
-      const Text('Joined us before? ', style: TextStyle(fontSize: 20)),
-      TextButton(
-        onPressed: (() {
-          Navigator.of(context).push(MaterialPageRoute(
-            builder: (context) => const LoginScreen(),
-          ));
-        }),
-        child: const Text(
-          'Login',
-          style: TextStyle(color: Colors.blue, fontSize: 20),
-        ),
-      ),
-    ]);
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(children: [
+//       const SizedBox(
+//         width: 70,
+//       ),
+//       const Text('Joined us before? ', style: TextStyle(fontSize: 20)),
+//       TextButton(
+//         onPressed: (() {
+//           Navigator.of(context).push(MaterialPageRoute(
+//             builder: (context) => const LoginScreen(),
+//           ));
+//         }),
+//         child: const Text(
+//           'Login',
+//           style: TextStyle(color: Colors.blue, fontSize: 20),
+//         ),
+//       ),
+//     ]);
+//   }
+// }
 
 class SignUpButton extends StatelessWidget {
   const SignUpButton({
@@ -214,16 +215,19 @@ class SignUpButton extends StatelessWidget {
           }
         }),
         child: Container(
-          height: 50,
-          width: 350,
+          height: 60,
+          width: 400,
           decoration: BoxDecoration(
-              color: Colors.blue, borderRadius: BorderRadius.circular(15)),
+              color: Colors.black, borderRadius: BorderRadius.circular(9)),
           child: const Center(
-              child: Text(
-            'Sign up',
-            style: TextStyle(
-                color: Colors.white, fontWeight: FontWeight.w500, fontSize: 20),
-          )),
+            child: Text(
+              'Sign up',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16),
+            ),
+          ),
         ),
       ),
     );

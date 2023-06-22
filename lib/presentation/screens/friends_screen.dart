@@ -1,3 +1,4 @@
+import 'package:chat_application/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +20,7 @@ class FrindsScreen extends StatelessWidget {
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: !snapshot.hasData
-              ? Container()
+              ? const SizedBox()
               : ListView.builder(
                   shrinkWrap: true,
                   itemCount: snapshot.data!['friends'].length,

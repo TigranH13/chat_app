@@ -8,6 +8,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../models/message_model.dart';
 
@@ -81,6 +82,7 @@ class FirebaseApi {
       TextEditingController messageController, String chatRoomId) async {
     if (messageController.text.isNotEmpty) {
       Message msg = Message(
+          type: 'text',
           sendby: FirebaseAuth.instance.currentUser!.displayName as String,
           message: messageController.text,
           time: DateTime.now().toIso8601String());
@@ -142,5 +144,60 @@ class FirebaseApi {
         .update({
       'requests': FieldValue.arrayRemove([user.email]),
     });
+  }
+
+  Future uploadImage(String chatRoomId, File? imageFile) async {
+    int status = 1;
+    String fileName = const Uuid().v1();
+    Message msg1 = Message(
+        sendby: FirebaseAuth.instance.currentUser!.displayName.toString(),
+        message: '',
+        time: DateTime.now().toIso8601String(),
+        type: 'image');
+    await FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(chatRoomId)
+        .collection('chats')
+        .doc(fileName)
+        .set(msg1.toJson());
+
+    var ref =
+        FirebaseStorage.instance.ref().child('images2').child('$fileName.jpg');
+    var uploadTask = await ref.putFile(imageFile!).catchError((error) async {
+      await FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(chatRoomId)
+          .collection('chats')
+          .doc(fileName)
+          .delete();
+
+      status = 0;
+    });
+    // var uploadTask = await ref.putFile(imageFile!);
+
+    if (status == 1) {
+      String imageUrl = await uploadTask.ref.getDownloadURL();
+      print(imageUrl);
+
+      await FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(chatRoomId)
+          .collection('chats')
+          .doc(fileName)
+          .update({'message': imageUrl});
+    }
+    // String imageUrl = await uploadTask.ref.getDownloadURL();
+    // print(imageUrl);
+    // final msg = Message(
+    //     sendby: FirebaseAuth.instance.currentUser!.displayName.toString(),
+    //     message: imageUrl,
+    //     time: DateTime.now().toIso8601String(),
+    //     type: 'image');
+
+    // await FirebaseFirestore.instance
+    //     .collection('chatroom')
+    //     .doc(chatRoomId)
+    //     .collection('chats')
+    //     .add(msg.toJson());
   }
 }

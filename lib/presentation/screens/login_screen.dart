@@ -1,13 +1,11 @@
-import 'package:chat_application/presentation/screens/sign_up_screen.dart';
-import 'package:chat_application/presentation/widgets/emailtextformfeild.dart';
-import 'package:chat_application/presentation/widgets/password_text_form_field.dart';
-
 import 'package:flutter/material.dart';
 
 import '../widgets/login_bottons.dart';
+import '../widgets/my_text_field.dart';
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  final void Function()? onTap;
+  const LoginScreen({super.key, required this.onTap});
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -20,42 +18,83 @@ class _LoginScreenState extends State<LoginScreen> {
     TextEditingController passwordController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
+      backgroundColor: Colors.grey[300],
+      body: SafeArea(
         child: SingleChildScrollView(
           child: Form(
             key: formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Center(
-                    child: Icon(
-                  Icons.message_rounded,
-                  color: Colors.grey,
-                  size: 150,
-                )),
-                const Padding(
-                  padding: EdgeInsets.only(top: 15, bottom: 15),
-                  child: Text(
-                    'Sign in',
-                    style: TextStyle(
-                        fontSize: 30,
-                        color: Color.fromARGB(255, 48, 48, 50),
-                        fontWeight: FontWeight.w500),
-                  ),
+            child: Center(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const SizedBox(
+                      height: 70,
+                    ),
+                    Icon(
+                      Icons.message_rounded,
+                      color: Colors.grey[800],
+                      size: 120,
+                    ),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    const Text(
+                      'Welcome back you\'ve been missed!',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    // EmailTextFormField(emailController: emailController),
+                    MyTextField(
+                        isemail: true,
+                        controller: emailController,
+                        hintText: 'Email',
+                        onbsureText: false),
+                    // Padding(
+                    //   padding: const EdgeInsets.only(top: 10, bottom: 15),
+                    //   child: PasswordTextFromField(
+                    //       passwordController: passwordController),
+                    // ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    MyTextField(
+                        controller: passwordController,
+                        isemail: false,
+                        hintText: 'Password',
+                        onbsureText: true),
+                    const SizedBox(
+                      height: 25,
+                    ),
+                    LoginButtons(
+                        formKey: formKey,
+                        emailController: emailController,
+                        passwordController: passwordController),
+                    const SizedBox(
+                      height: 50,
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text('Not a member?'),
+                        const SizedBox(
+                          width: 4,
+                        ),
+                        TextButton(
+                          onPressed: widget.onTap,
+                          child: const Text(
+                            'Register Now',
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                        )
+                      ],
+                    )
+                  ],
                 ),
-                EmailTextFormField(emailController: emailController),
-                Padding(
-                  padding: const EdgeInsets.only(top: 10, bottom: 15),
-                  child: PasswordTextFromField(
-                      passwordController: passwordController),
-                ),
-                LoginButtons(
-                    formKey: formKey,
-                    emailController: emailController,
-                    passwordController: passwordController),
-                const LowerText(),
-              ],
+              ),
             ),
           ),
         ),
@@ -71,24 +110,24 @@ class LowerText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(children: [
-      const SizedBox(
+    return const Row(children: [
+      SizedBox(
         width: 70,
       ),
-      const Text('Have not signed yet', style: TextStyle(fontSize: 20)),
-      TextButton(
-        onPressed: (() {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const SignUpScreen(),
-            ),
-          );
-        }),
-        child: const Text(
-          'Register',
-          style: TextStyle(color: Colors.blue, fontSize: 20),
-        ),
-      ),
+      Text('Have not signed yet', style: TextStyle(fontSize: 20)),
+      // TextButton(
+      //   onPressed: (() {
+      //     Navigator.of(context).push(
+      //       MaterialPageRoute(
+      //         builder: (context) => const SignUpScreen(),
+      //       ),
+      //     );
+      //   }),
+      //   child: const Text(
+      //     'Register',
+      //     style: TextStyle(color: Colors.blue, fontSize: 20),
+      //   ),
+      // ),
     ]);
   }
 }

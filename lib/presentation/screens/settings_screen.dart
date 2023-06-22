@@ -1,11 +1,13 @@
 import 'package:chat_application/models/user_model.dart';
 import 'package:chat_application/presentation/screens/edit_screen.dart';
 import 'package:chat_application/presentation/screens/firend_requests_sreen.dart';
-import 'package:chat_application/service/auth_service.dart';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
+
+import '../../service/auth_service.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});

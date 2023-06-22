@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 import '../../main.dart';
@@ -43,16 +45,16 @@ class LoginButtons extends StatelessWidget {
               }
             },
             child: Container(
-              height: 50,
-              width: 350,
+              height: 60,
+              width: 400,
               decoration: BoxDecoration(
-                  color: Colors.blue, borderRadius: BorderRadius.circular(15)),
-              child: const Center(
+                  color: Colors.black, borderRadius: BorderRadius.circular(9)),
+              child: Center(
                 child: Text(
                   'Login',
                   style: TextStyle(
                       color: Colors.white,
-                      fontWeight: FontWeight.w500,
+                      fontWeight: FontWeight.bold,
                       fontSize: 20),
                 ),
               ),
@@ -74,10 +76,10 @@ class LoginButtons extends StatelessWidget {
               myNavigatorKey.currentState!.popUntil((route) => route.isFirst);
             },
             child: Container(
-              height: 50,
-              width: 350,
+              height: 60,
+              width: 400,
               decoration: BoxDecoration(
-                  color: Colors.grey, borderRadius: BorderRadius.circular(15)),
+                  color: Colors.grey, borderRadius: BorderRadius.circular(9)),
               child: const Center(
                   child: Row(
                 children: [
