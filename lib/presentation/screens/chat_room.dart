@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:chat_application/models/message_model.dart';
+import 'package:chat_application/presentation/widgets/file_item.dart';
 import 'package:chat_application/service/firebase_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
@@ -15,19 +16,15 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:uuid/uuid.dart';
 
+import '../../main.dart';
+
 final bucketGlobal = PageStorageBucket();
 
-class ChatRoom extends StatefulWidget {
+class ChatRoom extends StatelessWidget {
   final String user;
   final String chatRoomId;
   ChatRoom({super.key, required this.user, required this.chatRoomId});
 
-  @override
-  State<ChatRoom> createState() => _ChatRoomState();
-}
-
-class _ChatRoomState extends State<ChatRoom> {
-  double? _progress;
   final TextEditingController messageController = TextEditingController();
 
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -37,7 +34,7 @@ class _ChatRoomState extends State<ChatRoom> {
     await _picker.pickImage(source: ImageSource.gallery).then((xFile) {
       if (xFile != null) {
         final imageFile = File(xFile.path);
-        FirebaseApi().uploadImage(widget.chatRoomId, imageFile);
+        FirebaseApi().uploadImage(chatRoomId, imageFile);
       }
     });
   }
@@ -47,48 +44,7 @@ class _ChatRoomState extends State<ChatRoom> {
     if (result == null) return;
     final path = result.files.single.path!;
     final File file = File(path);
-    uploadFile(widget.chatRoomId, file);
-  }
-
-  Future uploadFile(String chatRoomId, File file) async {
-    int status = 1;
-    String fileName = const Uuid().v1();
-    Message msg1 = Message(
-        sendby: FirebaseAuth.instance.currentUser!.displayName.toString(),
-        message: '',
-        time: DateTime.now().toIso8601String(),
-        type: 'file');
-    await FirebaseFirestore.instance
-        .collection('chatroom')
-        .doc(chatRoomId)
-        .collection('chats')
-        .doc(fileName)
-        .set(msg1.toJson());
-
-    var ref = FirebaseStorage.instance.ref().child('files').child(fileName);
-    var uploadTask = await ref.putFile(file).catchError((error) async {
-      await FirebaseFirestore.instance
-          .collection('chatroom')
-          .doc(chatRoomId)
-          .collection('chats')
-          .doc(fileName)
-          .delete();
-
-      status = 0;
-    });
-    // var uploadTask = await ref.putFile(imageFile!);
-
-    if (status == 1) {
-      String fileUrl = await uploadTask.ref.getDownloadURL();
-      print(fileUrl);
-
-      await FirebaseFirestore.instance
-          .collection('chatroom')
-          .doc(chatRoomId)
-          .collection('chats')
-          .doc(fileName)
-          .update({'message': fileUrl});
-    }
+    FirebaseApi().uploadFile(chatRoomId, file);
   }
 
   @override
@@ -97,7 +53,7 @@ class _ChatRoomState extends State<ChatRoom> {
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: Text(widget.user),
+        title: Text(user),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -107,7 +63,7 @@ class _ChatRoomState extends State<ChatRoom> {
               child: StreamBuilder(
                 stream: firestore
                     .collection('chatroom')
-                    .doc(widget.chatRoomId)
+                    .doc(chatRoomId)
                     .collection('chats')
                     .orderBy('time', descending: false)
                     .snapshots(),
@@ -116,7 +72,7 @@ class _ChatRoomState extends State<ChatRoom> {
                     return PageStorage(
                       bucket: bucketGlobal,
                       child: ListView.builder(
-                          key: PageStorageKey<String>(widget.chatRoomId),
+                          key: PageStorageKey<String>(chatRoomId),
                           itemCount: snapshot.data!.docs.length,
                           itemBuilder: (context, index) {
                             Map<String, dynamic> msg =
@@ -180,58 +136,57 @@ class _ChatRoomState extends State<ChatRoom> {
                                                 ),
                                               ))
                                           : msg['type'] == 'file'
-                                              ? _progress != null
-                                                  ? Container(
-                                                      padding: const EdgeInsets
-                                                              .symmetric(
-                                                          horizontal: 25.0,
-                                                          vertical: 15.0),
-                                                      color: Colors.white,
-                                                      child:
-                                                          const CircularProgressIndicator(),
-                                                    )
-                                                  : GestureDetector(
-                                                      onTap: () async {
-                                                        final file =
-                                                            await FileDownloader
-                                                                .downloadFile(
-                                                          onProgress: (fileName,
-                                                              progress) {
-                                                            setState(() {
-                                                              _progress =
-                                                                  progress;
-                                                            });
-                                                          },
-                                                          url: msg['message'],
-                                                          onDownloadCompleted:
-                                                              (path) {
-                                                            setState(() {
-                                                              _progress = null;
-                                                            });
-                                                            print('trav');
-                                                          },
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                    .symmetric(
-                                                                horizontal:
-                                                                    25.0,
-                                                                vertical: 15.0),
-                                                        color: Colors.white,
-                                                        alignment:
-                                                            msg['message'] != ""
-                                                                ? null
-                                                                : Alignment
-                                                                    .center,
-                                                        child: msg['message'] !=
-                                                                ""
-                                                            ? Icon(Icons
-                                                                .file_download)
-                                                            : const CircularProgressIndicator(),
-                                                      ),
-                                                    )
+                                              ? FileItem(url: msg['message'])
+                                              // ? _progress != null
+                                              //     ? Container(
+                                              //         padding: const EdgeInsets
+                                              //                 .symmetric(
+                                              //             horizontal: 25.0,
+                                              //             vertical: 15.0),
+                                              //         color: Colors.white,
+                                              //         child:
+                                              //             const CircularProgressIndicator(),
+                                              //       )
+                                              //     : GestureDetector(
+                                              //         onTap: () async {
+                                              //           final file =
+                                              //               await FileDownloader
+                                              //                   .downloadFile(
+                                              //             onProgress: (fileName,
+                                              //                 progress) {
+                                              //               setState(() {
+                                              //                 _progress =
+                                              //                     progress;
+                                              //               });
+                                              //             },
+                                              //             url: msg['message'],
+                                              //             onDownloadCompleted:
+                                              //                 (path) {
+                                              //               print('trav');
+                                              //               _progress = null;
+                                              //             },
+                                              //           );
+                                              //         },
+                                              //         child: Container(
+                                              //           padding:
+                                              //               const EdgeInsets
+                                              //                       .symmetric(
+                                              //                   horizontal:
+                                              //                       25.0,
+                                              //                   vertical: 15.0),
+                                              //           color: Colors.white,
+                                              //           alignment:
+                                              //               msg['message'] != ""
+                                              //                   ? null
+                                              //                   : Alignment
+                                              //                       .center,
+                                              //           child: msg['message'] !=
+                                              //                   ""
+                                              //               ? Icon(Icons
+                                              //                   .file_download)
+                                              //               : const CircularProgressIndicator(),
+                                              //         ),
+                                              //       )
                                               : Container(
                                                   height: size.height / 2.5,
                                                   width: size.width / 2,
@@ -288,8 +243,8 @@ class _ChatRoomState extends State<ChatRoom> {
                         ),
                       ),
                       IconButton(
-                        onPressed: () => FirebaseApi().onSendMessage(
-                            messageController, widget.chatRoomId),
+                        onPressed: () => FirebaseApi()
+                            .onSendMessage(messageController, chatRoomId),
                         icon: const Icon(
                           Icons.send,
                           color: Colors.grey,

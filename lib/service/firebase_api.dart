@@ -200,4 +200,45 @@ class FirebaseApi {
     //     .collection('chats')
     //     .add(msg.toJson());
   }
+
+  Future uploadFile(String chatRoomId, File file) async {
+    int status = 1;
+    String fileName = const Uuid().v1();
+    Message msg1 = Message(
+        sendby: FirebaseAuth.instance.currentUser!.displayName.toString(),
+        message: '',
+        time: DateTime.now().toIso8601String(),
+        type: 'file');
+    await FirebaseFirestore.instance
+        .collection('chatroom')
+        .doc(chatRoomId)
+        .collection('chats')
+        .doc(fileName)
+        .set(msg1.toJson());
+
+    var ref = FirebaseStorage.instance.ref().child('files').child(fileName);
+    var uploadTask = await ref.putFile(file).catchError((error) async {
+      await FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(chatRoomId)
+          .collection('chats')
+          .doc(fileName)
+          .delete();
+
+      status = 0;
+    });
+    // var uploadTask = await ref.putFile(imageFile!);
+
+    if (status == 1) {
+      String fileUrl = await uploadTask.ref.getDownloadURL();
+      print(fileUrl);
+
+      await FirebaseFirestore.instance
+          .collection('chatroom')
+          .doc(chatRoomId)
+          .collection('chats')
+          .doc(fileName)
+          .update({'message': fileUrl});
+    }
+  }
 }

@@ -494,6 +494,12 @@
       "languageVersion": "2.12"
     },
     {
+      "name": "percent_indicator",
+      "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/percent_indicator-4.2.3",
+      "packageUri": "lib/",
+      "languageVersion": "2.12"
+    },
+    {
       "name": "plugin_platform_interface",
       "rootUri": "file:///C:/Users/user/AppData/Local/Pub/Cache/hosted/pub.dev/plugin_platform_interface-2.1.4",
       "packageUri": "lib/",
@@ -656,7 +662,7 @@
       "languageVersion": "2.18"
     }
   ],
-  "generated": "2023-06-21T22:34:04.967472Z",
+  "generated": "2023-06-22T16:27:49.313472Z",
   "generator": "pub",
   "generatorVersion": "3.0.1"
 }

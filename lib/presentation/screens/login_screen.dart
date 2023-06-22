@@ -102,32 +102,3 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
-
-class LowerText extends StatelessWidget {
-  const LowerText({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const Row(children: [
-      SizedBox(
-        width: 70,
-      ),
-      Text('Have not signed yet', style: TextStyle(fontSize: 20)),
-      // TextButton(
-      //   onPressed: (() {
-      //     Navigator.of(context).push(
-      //       MaterialPageRoute(
-      //         builder: (context) => const SignUpScreen(),
-      //       ),
-      //     );
-      //   }),
-      //   child: const Text(
-      //     'Register',
-      //     style: TextStyle(color: Colors.blue, fontSize: 20),
-      //   ),
-      // ),
-    ]);
-  }
-}
