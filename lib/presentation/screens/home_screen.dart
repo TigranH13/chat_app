@@ -1,3 +1,4 @@
+import 'package:chat_application/group_chats/group_chat_screen.dart';
 import 'package:chat_application/presentation/screens/friends_screen.dart';
 import 'package:chat_application/presentation/screens/search_screen.dart';
 
@@ -16,6 +17,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _children = [
     FrindsScreen(),
+    GroupChatScreen(),
     const SearchScreen(),
     const SettingsScreen(),
   ];
@@ -45,8 +47,12 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8),
               tabs: const [
                 GButton(
-                  icon: Icons.people_rounded,
+                  icon: Icons.people,
                   text: 'Friends',
+                ),
+                GButton(
+                  icon: Icons.people_alt_rounded,
+                  text: 'Group Chat',
                 ),
                 GButton(
                   icon: Icons.search,

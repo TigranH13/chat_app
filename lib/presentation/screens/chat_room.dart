@@ -1,29 +1,28 @@
 import 'dart:io';
 
-import 'package:chat_application/models/message_model.dart';
+import 'package:chat_application/group_chats/group_info_screen.dart';
 import 'package:chat_application/presentation/widgets/file_item.dart';
 import 'package:chat_application/service/firebase_api.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:open_file/open_file.dart';
 import 'package:flutter/material.dart';
 
-import 'package:flutter_file_downloader/flutter_file_downloader.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'package:uuid/uuid.dart';
-
-import '../../main.dart';
 
 final bucketGlobal = PageStorageBucket();
 
 class ChatRoom extends StatelessWidget {
-  final String user;
+  final bool isGroupChat;
+
+  final String name;
   final String chatRoomId;
-  ChatRoom({super.key, required this.user, required this.chatRoomId});
+  ChatRoom(
+      {super.key,
+      required this.name,
+      required this.chatRoomId,
+      required this.isGroupChat});
 
   final TextEditingController messageController = TextEditingController();
 
@@ -53,7 +52,21 @@ class ChatRoom extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.grey,
       appBar: AppBar(
-        title: Text(user),
+        title: Text(name),
+        actions: [
+          isGroupChat
+              ? IconButton(
+                  onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => GroupInfoScreen(
+                            groupName: name,
+                            groupId: chatRoomId,
+                          ),
+                        ),
+                      ),
+                  icon: Icon(Icons.more_vert))
+              : SizedBox()
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -80,10 +93,7 @@ class ChatRoom extends StatelessWidget {
                                     as Map<String, dynamic>;
                             bool isMe = msg['sendby'] ==
                                 FirebaseAuth.instance.currentUser!.displayName;
-                            return
-                                // msg['type'] == 'text'
-                                //     ?
-                                Padding(
+                            return Padding(
                               padding: const EdgeInsets.symmetric(
                                   vertical: 8, horizontal: 5),
                               child: Row(
@@ -96,111 +106,86 @@ class ChatRoom extends StatelessWidget {
                                         maxWidth:
                                             MediaQuery.of(context).size.width *
                                                 0.6),
-                                    child: ClipPath(
-                                      child: msg['type'] == 'text'
-                                          ? Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
+                                    child: Column(
+                                      crossAxisAlignment: isMe
+                                          ? CrossAxisAlignment.end
+                                          : CrossAxisAlignment.start,
+                                      children: [
+                                        ClipPath(
+                                          child: msg['type'] == 'text'
+                                              ? Container(
+                                                  padding: const EdgeInsets
+                                                          .symmetric(
                                                       horizontal: 25.0,
                                                       vertical: 15.0),
-                                              decoration: BoxDecoration(
-                                                color: isMe
-                                                    ? const Color(0xFFFEF9EB)
-                                                    : const Color.fromARGB(
-                                                        255, 192, 177, 176),
-                                                borderRadius: isMe
-                                                    ? const BorderRadius.only(
-                                                        topLeft:
-                                                            Radius.circular(18),
-                                                        bottomLeft:
-                                                            Radius.circular(18),
-                                                        topRight:
-                                                            Radius.circular(18),
-                                                      )
-                                                    : const BorderRadius.only(
-                                                        topRight:
-                                                            Radius.circular(18),
-                                                        bottomLeft:
-                                                            Radius.circular(18),
-                                                        bottomRight:
-                                                            Radius.circular(18),
-                                                      ),
-                                              ),
-                                              child: Text(
-                                                snapshot.data!.docs[index]
-                                                    ['message'],
-                                                style: const TextStyle(
-                                                  color: Colors.blueGrey,
-                                                  fontSize: 16.0,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                              ))
-                                          : msg['type'] == 'file'
-                                              ? FileItem(url: msg['message'])
-                                              // ? _progress != null
-                                              //     ? Container(
-                                              //         padding: const EdgeInsets
-                                              //                 .symmetric(
-                                              //             horizontal: 25.0,
-                                              //             vertical: 15.0),
-                                              //         color: Colors.white,
-                                              //         child:
-                                              //             const CircularProgressIndicator(),
-                                              //       )
-                                              //     : GestureDetector(
-                                              //         onTap: () async {
-                                              //           final file =
-                                              //               await FileDownloader
-                                              //                   .downloadFile(
-                                              //             onProgress: (fileName,
-                                              //                 progress) {
-                                              //               setState(() {
-                                              //                 _progress =
-                                              //                     progress;
-                                              //               });
-                                              //             },
-                                              //             url: msg['message'],
-                                              //             onDownloadCompleted:
-                                              //                 (path) {
-                                              //               print('trav');
-                                              //               _progress = null;
-                                              //             },
-                                              //           );
-                                              //         },
-                                              //         child: Container(
-                                              //           padding:
-                                              //               const EdgeInsets
-                                              //                       .symmetric(
-                                              //                   horizontal:
-                                              //                       25.0,
-                                              //                   vertical: 15.0),
-                                              //           color: Colors.white,
-                                              //           alignment:
-                                              //               msg['message'] != ""
-                                              //                   ? null
-                                              //                   : Alignment
-                                              //                       .center,
-                                              //           child: msg['message'] !=
-                                              //                   ""
-                                              //               ? Icon(Icons
-                                              //                   .file_download)
-                                              //               : const CircularProgressIndicator(),
-                                              //         ),
-                                              //       )
-                                              : Container(
-                                                  height: size.height / 2.5,
-                                                  width: size.width / 2,
-                                                  alignment:
-                                                      msg['message'] != ""
-                                                          ? null
-                                                          : Alignment.center,
-                                                  child: msg['message'] != ""
-                                                      ? Image.network(
-                                                          msg['message'],
-                                                          fit: BoxFit.cover,
-                                                        )
-                                                      : const CircularProgressIndicator(),
-                                                ),
+                                                  decoration: BoxDecoration(
+                                                    color: isMe
+                                                        ? const Color(
+                                                            0xFFFEF9EB)
+                                                        : const Color.fromARGB(
+                                                            255, 192, 177, 176),
+                                                    borderRadius: isMe
+                                                        ? const BorderRadius
+                                                            .only(
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    18),
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    18),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    18),
+                                                          )
+                                                        : const BorderRadius
+                                                            .only(
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    18),
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    18),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    18),
+                                                          ),
+                                                  ),
+                                                  child: Text(
+                                                    snapshot.data!.docs[index]
+                                                        ['message'],
+                                                    style: const TextStyle(
+                                                      color: Colors.blueGrey,
+                                                      fontSize: 16.0,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ))
+                                              : msg['type'] == 'file'
+                                                  ? FileItem(
+                                                      url: msg['message'])
+                                                  : Container(
+                                                      height: size.height / 2.5,
+                                                      width: size.width / 2,
+                                                      alignment:
+                                                          msg['message'] != ""
+                                                              ? null
+                                                              : Alignment
+                                                                  .center,
+                                                      child: msg['message'] !=
+                                                              ""
+                                                          ? Image.network(
+                                                              msg['message'],
+                                                              fit: BoxFit.cover,
+                                                            )
+                                                          : const CircularProgressIndicator(),
+                                                    ),
+                                        ),
+                                        Text(
+                                          msg['sendby'],
+                                          style: const TextStyle(
+                                              color: Colors.white),
+                                        )
+                                      ],
                                     ),
                                   ),
                                 ],

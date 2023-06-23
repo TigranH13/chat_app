@@ -39,7 +39,8 @@ class UserTile extends StatelessWidget {
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder: (context) => ChatRoom(
-                            user: user.name,
+                            isGroupChat: false,
+                            name: user.name,
                             chatRoomId: Utils().chatRoomId(
                                 FirebaseAuth
                                     .instance.currentUser!.email!.hashCode,

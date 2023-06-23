@@ -1,4 +1,5 @@
 import 'package:chat_application/presentation/widgets/user_tile.dart';
+import 'package:chat_application/service/auth_service.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

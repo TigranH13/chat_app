@@ -8,9 +8,11 @@ class Message {
   final String sendby;
   final String time;
   final String message;
+  // final String avatarUrl;
 
   Message(
       {required this.sendby,
+      // required this.avatarUrl,
       required this.message,
       required this.time,
       required this.type});

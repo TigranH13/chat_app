@@ -27,18 +27,21 @@ class AuthService {
       final credential = GoogleAuthProvider.credential(
           accessToken: gAuth.accessToken, idToken: gAuth.idToken);
 
-      await FirebaseAuth.instance.signInWithCredential(credential);
-      final newUser = NewUser(
-          name: user.displayName!,
-          email: user.email,
-          avatarUrl: user.photoUrl!,
-          friends: [],
-          requests: []);
+      final us = await FirebaseAuth.instance.signInWithCredential(credential);
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.email)
-          .set(newUser.toJson());
+      if (us.additionalUserInfo!.isNewUser) {
+        final newUser = NewUser(
+            name: user.displayName!,
+            email: user.email,
+            avatarUrl: user.photoUrl!,
+            friends: [],
+            requests: []);
+
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.email)
+            .set(newUser.toJson());
+      }
     } catch (error) {
       print(error);
     }
