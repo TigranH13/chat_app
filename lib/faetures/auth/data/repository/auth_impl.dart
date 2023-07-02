@@ -1,10 +1,6 @@
 import 'dart:io';
 
-import 'package:chat_application/faetures/auth/presantation/provider/get_image.dart';
-import 'package:chat_application/faetures/auth/data/sources/get_image_impl.dart';
-
 import 'package:chat_application/faetures/auth/domain/repository/auth_repository.dart';
-import 'package:chat_application/faetures/auth/presantation/provider/module.dart';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
